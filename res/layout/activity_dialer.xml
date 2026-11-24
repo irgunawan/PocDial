@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="POC DIALER"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp" />
+
+    <EditText
+        android:id="@+id/digits"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:inputType="phone"
+        android:nextFocusDown="@id/key1"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:hint="Nomor / USSD" />
+
+    <GridLayout
+        android:id="@+id/keypad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4"
+        android:layout_marginTop="10dp">
+        <Button
+            android:id="@+id/key1"
+            android:text="1"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/digits"
+            android:nextFocusDown="@id/key4"
+            android:nextFocusLeft="@id/key3"
+            android:nextFocusRight="@id/key2" />
+        <Button
+            android:id="@+id/key2"
+            android:text="2"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/digits"
+            android:nextFocusDown="@id/key5"
+            android:nextFocusLeft="@id/key1"
+            android:nextFocusRight="@id/key3" />
+        <Button
+            android:id="@+id/key3"
+            android:text="3"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/digits"
+            android:nextFocusDown="@id/key6"
+            android:nextFocusLeft="@id/key2"
+            android:nextFocusRight="@id/key1" />
+        <Button
+            android:id="@+id/key4"
+            android:text="4"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key1"
+            android:nextFocusDown="@id/key7"
+            android:nextFocusLeft="@id/key6"
+            android:nextFocusRight="@id/key5" />
+        <Button
+            android:id="@+id/key5"
+            android:text="5"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key2"
+            android:nextFocusDown="@id/key8"
+            android:nextFocusLeft="@id/key4"
+            android:nextFocusRight="@id/key6" />
+        <Button
+            android:id="@+id/key6"
+            android:text="6"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key3"
+            android:nextFocusDown="@id/key9"
+            android:nextFocusLeft="@id/key5"
+            android:nextFocusRight="@id/key4" />
+        <Button
+            android:id="@+id/key7"
+            android:text="7"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key4"
+            android:nextFocusDown="@id/keyStar"
+            android:nextFocusLeft="@id/key9"
+            android:nextFocusRight="@id/key8" />
+        <Button
+            android:id="@+id/key8"
+            android:text="8"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key5"
+            android:nextFocusDown="@id/key0"
+            android:nextFocusLeft="@id/key7"
+            android:nextFocusRight="@id/key9" />
+        <Button
+            android:id="@+id/key9"
+            android:text="9"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key6"
+            android:nextFocusDown="@id/keyPound"
+            android:nextFocusLeft="@id/key8"
+            android:nextFocusRight="@id/key7" />
+        <Button
+            android:id="@+id/keyStar"
+            android:text="*"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key7"
+            android:nextFocusDown="@id/callButton"
+            android:nextFocusLeft="@id/key0"
+            android:nextFocusRight="@id/keyPound" />
+        <Button
+            android:id="@+id/key0"
+            android:text="0"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key8"
+            android:nextFocusDown="@id/callButton"
+            android:nextFocusLeft="@id/keyStar"
+            android:nextFocusRight="@id/keyPound" />
+        <Button
+            android:id="@+id/keyPound"
+            android:text="#"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_columnWeight="1"
+            android:focusable="true"
+            android:clickable="true"
+            android:textSize="24sp"
+            android:nextFocusUp="@id/key9"
+            android:nextFocusDown="@id/callButton"
+            android:nextFocusLeft="@id/key0"
+            android:nextFocusRight="@id/keyStar" />
+    </GridLayout>
+
+    <Button
+        android:id="@+id/aboutButton"
+        android:text="@string/about_label"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:textSize="14sp"
+        android:nextFocusUp="@id/callButton" />
+
+    <Button
+        android:id="@+id/callButton"
+        android:text="@string/call_label"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:textSize="20sp"
+        android:nextFocusUp="@id/keyPound"
+        android:nextFocusLeft="@id/keyPound"
+        android:nextFocusRight="@id/keyPound" />
+</LinearLayout>
