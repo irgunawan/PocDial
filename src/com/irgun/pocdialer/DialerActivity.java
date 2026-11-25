@@ -60,12 +60,19 @@ public class DialerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new CrashReporter(this, "POC DIAL", "1.4").install();
+        new CrashReporter(this, "POC DIAL", "1.5").install();
         setContentView(R.layout.activity_dialer);
         digits = (EditText) findViewById(R.id.digits);
         /* Keypad angka sudah ada di layar; jangan biarkan IME menutupi layar
            radio 128x160 (PNC360S). */
         try { digits.setShowSoftInputOnFocus(false); } catch (Throwable ignored) {}
+
+        /* Minta izin CALL_PHONE lebih awal: di radio tombol CALL bisa ditekan
+           sebelum sempat ada dialog izin, sehingga panggilan USSD gagal diam-diam. */
+        if (Build.VERSION.SDK_INT >= 23 &&
+                checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQ_CALL);
+        }
 
         Intent intent = getIntent();
         if (intent != null && intent.getData() != null) {
@@ -120,19 +127,34 @@ public class DialerActivity extends Activity {
     }
 
     private void requestDefaultDialerRole() {
-        if (Build.VERSION.SDK_INT < 30) return;
+        if (Build.VERSION.SDK_INT < 29) return;
+        try {
+            /* RoleManager dipakai lewat reflection supaya kelas API 29 tidak
+               memaksa verifikasi saat aplikasi berjalan di Android 5/7. */
+            Class<?> rmClass = Class.forName("android.app.role.RoleManager");
+            Object rm = getSystemService("role");
+            String role = (String) rmClass.getField("ROLE_DIALER").get(null);
+            Boolean held = (Boolean) rmClass.getMethod("isRoleHeld", String.class).invoke(rm, role);
+            if (rm != null && !Boolean.TRUE.equals(held)) {
+                Intent i = (Intent) rmClass.getMethod("createRequestRoleIntent", String.class)
+                        .invoke(rm, role);
+                if (i != null) { startActivity(i); return; }
+            }
+        } catch (Throwable ignored) {}
         try {
             Intent i = new Intent("android.telecom.action.CHANGE_DEFAULT_DIALER");
             i.putExtra("android.telecom.extra.CHANGE_DEFAULT_DIALER_PACKAGE_NAME", getPackageName());
             startActivity(i);
         } catch (Throwable t) {
-            Toast.makeText(this, "Set PocDialer sebagai dialer default di Settings", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Set POC DIAL sebagai dialer default di Settings", Toast.LENGTH_LONG).show();
         }
     }
 
     private void placeCall() {
         String number = digits.getText().toString().trim();
         if (number.length() == 0) return;
+        /* '#' harus dikodekan supaya dialer mengirimnya sebagai akhir USSD,
+           bukan sebagai post-dial pause. Uri.encode menjaga '*' apa adanya. */
         Uri uri = Uri.parse("tel:" + Uri.encode(number));
 
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -142,19 +164,22 @@ public class DialerActivity extends Activity {
             return;
         }
 
-        boolean direct = Build.VERSION.SDK_INT < 30 || isDefaultDialer();
-        Intent call;
-        if (direct) {
-            call = new Intent(Intent.ACTION_CALL, uri);
-        } else {
-            call = new Intent(Intent.ACTION_DIAL, uri);
-            requestDefaultDialerRole();
-        }
+        /* ACTION_CALL sudah cukup di API < 30 dan merupakan satu-satunya jalur
+           yang meneruskan USSD ke jaringan. Jangan turun ke ACTION_DIAL di sini:
+           dialer ODM (com.onego.dialer) menolak USSD. */
+        boolean callDirect = Build.VERSION.SDK_INT < 30 || isDefaultDialer();
         try {
+            Intent call = new Intent(callDirect ? Intent.ACTION_CALL : Intent.ACTION_DIAL, uri);
             startActivity(call);
-        } catch (Throwable t) {
-            Toast.makeText(this, "Tidak dapat membuka dialer: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        } catch (Throwable first) {
+            if (Build.VERSION.SDK_INT < 30) {
+                Toast.makeText(this, "Gagal memanggil: " + first.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
         }
+        requestDefaultDialerRole();
+        Toast.makeText(this, "Jadikan POC DIAL dialer default, lalu tekan CALL lagi", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -169,8 +194,15 @@ public class DialerActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
-            /* DPAD tengah / ENTER sengaja tidak diambil: biarkan tombol yang
-               sedang fokus yang bereaksi (ketik angka, bukan langsung memanggil). */
+            /* DPAD tengah / ENTER hanya dipakai kalau fokus sedang di tombol CALL.
+               Di tombol angka, keduanya tetap jadi "ketik angka yang difokuskan". */
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+            case KeyEvent.KEYCODE_ENTER:
+                if (findViewById(R.id.callButton).isFocused()) {
+                    placeCall();
+                    return true;
+                }
+                return super.onKeyDown(keyCode, event);
             case KeyEvent.KEYCODE_CALL:
                 placeCall();
                 return true;
