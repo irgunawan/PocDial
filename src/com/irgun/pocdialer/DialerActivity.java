@@ -68,6 +68,7 @@ public class DialerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new CrashReporter(this, "POC DIAL", "1.4").install();
         setContentView(R.layout.activity_dialer);
         digits = (EditText) findViewById(R.id.digits);
         /* Keypad angka sudah ada di layar; jangan biarkan IME menutupi layar
