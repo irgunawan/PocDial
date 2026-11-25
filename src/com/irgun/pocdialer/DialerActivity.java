@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.text.Editable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -43,43 +44,25 @@ public class DialerActivity extends Activity {
                 getResources().getDisplayMetrics());
     }
 
-    private void applyTinySizes() {
-        final int kh = dp(24f), ch = dp(26f), ah = dp(18f), dh = dp(20f), pad = dp(3f);
-        final float kt = sp(11f), dt = sp(12f), tt = sp(9f);
+    /* Tinggi baris dikunci bobot (weightSum=6) sehingga selalu muat; yang perlu
+       disesuaikan saat runtime hanya ukuran teks kalau perangkat melaporkan
+       klasifikasi layar yang tidak memicu values-small. */
+    private void applyTinyText() {
+        final float kt = sp(13f), dt = sp(14f), at = sp(10f);
         for (int id : KEY_IDS) {
             Button b = (Button) findViewById(id);
             if (b == null) continue;
-            b.getLayoutParams().height = kh;
             b.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
-            b.requestLayout();
         }
+        Button del = (Button) findViewById(R.id.btnDel);
+        if (del != null) del.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
         Button call = (Button) findViewById(R.id.callButton);
-        if (call != null) {
-            call.getLayoutParams().height = ch;
-            call.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
-            call.requestLayout();
-        }
+        if (call != null) call.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, at);
         Button about = (Button) findViewById(R.id.aboutButton);
-        if (about != null) {
-            about.getLayoutParams().height = ah;
-            about.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, sp(7f));
-            about.requestLayout();
-        }
-        digits.getLayoutParams().height = dh;
+        if (about != null) about.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, at);
+        Button cancel = (Button) findViewById(R.id.cancelButton);
+        if (cancel != null) cancel.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, at);
         digits.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dt);
-        digits.requestLayout();
-        TextView title = (TextView) findViewById(R.id.dialTitle);
-        if (title != null) title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, tt);
-        View keypad = findViewById(R.id.keypad);
-        if (keypad != null && keypad.getLayoutParams() instanceof android.view.ViewGroup.MarginLayoutParams) {
-            ((android.view.ViewGroup.MarginLayoutParams) keypad.getLayoutParams()).topMargin = dp(2f);
-            keypad.requestLayout();
-        }
-        View root = findViewById(android.R.id.content);
-        if (root instanceof android.view.ViewGroup) {
-            android.view.View child = ((android.view.ViewGroup) root).getChildAt(0);
-            if (child instanceof android.view.ViewGroup) ((android.view.ViewGroup) child).setPadding(pad, pad, pad, pad);
-        }
     }
 
     @Override
@@ -120,8 +103,35 @@ public class DialerActivity extends Activity {
                 placeCall();
             }
         });
+        /* Hapus: tekan = satu karakter, tahan = kosongkan semua. */
+        View del = findViewById(R.id.btnDel);
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Editable e = digits.getText();
+                if (e.length() > 0) e.delete(e.length() - 1, e.length());
+            }
+        });
+        del.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                digits.setText("");
+                return true;
+            }
+        });
+        /* BATAL: kosongkan; kalau sudah kosong, keluar dari aplikasi. */
+        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (digits.getText().length() > 0) {
+                    digits.setText("");
+                } else {
+                    finish();
+                }
+            }
+        });
 
-        if (tinyScreen()) applyTinySizes();
+        if (tinyScreen()) applyTinyText();
 
         if (Build.VERSION.SDK_INT >= 30 && !isDefaultDialer()) {
             Toast.makeText(this, "Jadikan PocDialer dialer utama untuk USSD langsung", Toast.LENGTH_LONG).show();
@@ -202,7 +212,7 @@ public class DialerActivity extends Activity {
                 digits.append("#");
                 return true;
             case KeyEvent.KEYCODE_F5:
-                findViewById(R.id.key2).requestFocus();
+                findViewById(R.id.key5).requestFocus();
                 return true;
             default:
                 return super.onKeyDown(keyCode, event);

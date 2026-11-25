@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">POC DIAL</string>
     <string name="call_label">CALL</string>
-    <string name="about_text">POC DIAL v1.2\nDialer POC untuk Android 5.1+\n\nirgun.web.id</string>
-    <string name="about_label">ABOUT</string>
+    <string name="cancel_label">BATAL</string>
+    <string name="del_label">&#9003;</string>
+    <string name="about_label">i</string>
+    <string name="about_text">POC DIAL v1.3\nDialer POC untuk Android 5.1+\n\nirgun.web.id</string>
 </resources>
