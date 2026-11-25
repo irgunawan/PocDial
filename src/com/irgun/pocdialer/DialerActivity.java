@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class DialerActivity extends Activity {
@@ -26,11 +27,69 @@ public class DialerActivity extends Activity {
             R.id.keyStar, R.id.key0, R.id.keyPound
     };
 
+    /* Layar radio POC 128x160 px (~170x213dp): resources -small sudah mengecilkan
+       @dimen, ini jaring pengaman kalau perangkat mengklasifikasi dirinya lain. */
+    private boolean tinyScreen() {
+        android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
+        return (dm.widthPixels / dm.density) < 220f || (dm.heightPixels / dm.density) < 300f;
+    }
+
+    private int dp(float v) {
+        return Math.round(v * getResources().getDisplayMetrics().density);
+    }
+
+    private float sp(float v) {
+        return android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP, v,
+                getResources().getDisplayMetrics());
+    }
+
+    private void applyTinySizes() {
+        final int kh = dp(24f), ch = dp(26f), ah = dp(18f), dh = dp(20f), pad = dp(3f);
+        final float kt = sp(11f), dt = sp(12f), tt = sp(9f);
+        for (int id : KEY_IDS) {
+            Button b = (Button) findViewById(id);
+            if (b == null) continue;
+            b.getLayoutParams().height = kh;
+            b.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
+            b.requestLayout();
+        }
+        Button call = (Button) findViewById(R.id.callButton);
+        if (call != null) {
+            call.getLayoutParams().height = ch;
+            call.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
+            call.requestLayout();
+        }
+        Button about = (Button) findViewById(R.id.aboutButton);
+        if (about != null) {
+            about.getLayoutParams().height = ah;
+            about.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, sp(7f));
+            about.requestLayout();
+        }
+        digits.getLayoutParams().height = dh;
+        digits.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dt);
+        digits.requestLayout();
+        TextView title = (TextView) findViewById(R.id.dialTitle);
+        if (title != null) title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, tt);
+        View keypad = findViewById(R.id.keypad);
+        if (keypad != null && keypad.getLayoutParams() instanceof android.view.ViewGroup.MarginLayoutParams) {
+            ((android.view.ViewGroup.MarginLayoutParams) keypad.getLayoutParams()).topMargin = dp(2f);
+            keypad.requestLayout();
+        }
+        View root = findViewById(android.R.id.content);
+        if (root instanceof android.view.ViewGroup) {
+            android.view.View child = ((android.view.ViewGroup) root).getChildAt(0);
+            if (child instanceof android.view.ViewGroup) ((android.view.ViewGroup) child).setPadding(pad, pad, pad, pad);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialer);
         digits = (EditText) findViewById(R.id.digits);
+        /* Keypad angka sudah ada di layar; jangan biarkan IME menutupi layar
+           radio 128x160 (PNC360S). */
+        try { digits.setShowSoftInputOnFocus(false); } catch (Throwable ignored) {}
 
         Intent intent = getIntent();
         if (intent != null && intent.getData() != null) {
@@ -61,6 +120,8 @@ public class DialerActivity extends Activity {
                 placeCall();
             }
         });
+
+        if (tinyScreen()) applyTinySizes();
 
         if (Build.VERSION.SDK_INT >= 30 && !isDefaultDialer()) {
             Toast.makeText(this, "Jadikan PocDialer dialer utama untuk USSD langsung", Toast.LENGTH_LONG).show();
