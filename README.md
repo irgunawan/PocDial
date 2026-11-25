@@ -42,3 +42,16 @@ Kriteria lulus: DPAD memindahkan fokus antar angka, ENTER / DPAD_CENTER / CALL m
 ## OTA
 
 Entri OTA untuk paket ini tersedia di `https://ota.irgun.web.id/check.php?key=com.irgun.pocdialer`.
+
+## Catatan migrasi package
+
+Package berubah dari `com.pocindonesia.pocdialer` menjadi `com.irgun.pocdialer`.
+APK baru **bukan update** untuk instalasi lama — Android menganggapnya aplikasi
+berbeda. Uninstall versi lama dulu sebelum memasang yang baru, atau akan ada dua
+entri POC DIAL di launcher.
+
+Kunci OTA ikut berubah. Pastikan endpoint `check.php` punya entri untuk
+`com.irgun.pocdialer`; kalau belum, OTA tidak akan menemukan update.
+
+Berkas `apk/POC-DIAL-v1.0.apk` dan `v1.1.apk` adalah arsip lama dan masih
+memakai package `com.pocindonesia.pocdialer` — sengaja tidak dihapus.
