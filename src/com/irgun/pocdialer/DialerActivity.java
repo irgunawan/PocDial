@@ -1,4 +1,4 @@
-package com.pocindonesia.pocdialer;
+package com.irgun.pocdialer;
 
 import android.Manifest;
 import android.app.Activity;

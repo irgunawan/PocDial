@@ -15,8 +15,8 @@ mkdir -p build gen classes build/dexout
   --min-sdk-version 21 --target-sdk-version 34 build/res.zip
 
 "$JAVAC" -source 11 -target 11 -cp "$JAR" -d classes \
-  gen/com/pocindonesia/pocdialer/R.java \
-  src/com/pocindonesia/pocdialer/DialerActivity.java
+  gen/com/irgun/pocdialer/R.java \
+  src/com/irgun/pocdialer/DialerActivity.java
 
 "$BT/d8" --lib "$JAR" --output build/dexout $(find classes -name '*.class')
 

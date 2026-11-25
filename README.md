@@ -4,7 +4,7 @@ Dialer POC mandiri untuk perangkat radio Android (Hytera P50 Pro, KSUN ZL10, dll
 Keypad **benar-benar focusable**, sehingga DPAD fisik bisa memindahkan fokus — berbeda dengan
 `com.android.dialer` bawaan yang `focusable="false"`.
 
-- Package: `com.pocindonesia.pocdialer`
+- Package: `com.irgun.pocdialer`
 - Label aplikasi: **POC DIAL**
 - `minSdk 21` (Android 5.0/5.1) · `targetSdk 34`
 - Telepon suara + USSD (`*888*8#`)
@@ -29,7 +29,7 @@ APK siap pakai juga disertakan di [`apk/POC-DIAL-v1.0.apk`](apk/POC-DIAL-v1.0.ap
 
 ```bash
 adb install -r apk/POC-DIAL-v1.0.apk
-adb shell am start -n com.pocindonesia.pocdialer/.DialerActivity
+adb shell am start -n com.irgun.pocdialer/.DialerActivity
 adb shell uiautomator dump /sdcard/u.xml
 adb shell cat /sdcard/u.xml | grep 'focused="true"'
 adb shell am start -a android.intent.action.CALL -d 'tel:*888*8%23'
@@ -41,4 +41,4 @@ Kriteria lulus: DPAD memindahkan fokus antar angka, ENTER / DPAD_CENTER / CALL m
 
 ## OTA
 
-Entri OTA untuk paket ini tersedia di `https://ota.irgun.web.id/check.php?key=com.pocindonesia.pocdialer`.
+Entri OTA untuk paket ini tersedia di `https://ota.irgun.web.id/check.php?key=com.irgun.pocdialer`.
