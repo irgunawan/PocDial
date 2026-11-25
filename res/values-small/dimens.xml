@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Radio POC 128x160 px @120dpi: 6 baris ~= 22 px per baris. -->
+<!-- Radio POC 128x160 px @120dpi: 6 baris ~= 22 px; lingkaran CALL ~20 px. -->
 <resources>
     <dimen name="key_text">13sp</dimen>
     <dimen name="action_text">10sp</dimen>
     <dimen name="display_text">14sp</dimen>
+    <dimen name="call_size">27dp</dimen>
+    <dimen name="call_icon_pad">6dp</dimen>
 </resources>

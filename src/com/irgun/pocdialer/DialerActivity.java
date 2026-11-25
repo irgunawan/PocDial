@@ -54,14 +54,6 @@ public class DialerActivity extends Activity {
             if (b == null) continue;
             b.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
         }
-        Button del = (Button) findViewById(R.id.btnDel);
-        if (del != null) del.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, kt);
-        Button call = (Button) findViewById(R.id.callButton);
-        if (call != null) call.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, at);
-        Button about = (Button) findViewById(R.id.aboutButton);
-        if (about != null) about.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, at);
-        Button cancel = (Button) findViewById(R.id.cancelButton);
-        if (cancel != null) cancel.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, at);
         digits.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dt);
     }
 
@@ -88,47 +80,23 @@ public class DialerActivity extends Activity {
             }
         };
         for (int id : KEY_IDS) findViewById(id).setOnClickListener(keyClick);
-        findViewById(R.id.aboutButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(DialerActivity.this)
-                        .setTitle("POC DIAL")
-                        .setMessage(R.string.about_text)
-                        .setPositiveButton("OK", null)
-                        .show();
-            }
-        });
-        findViewById(R.id.callButton).setOnClickListener(new View.OnClickListener() {
+        /* Tombol telepon bulat. Tekan-tahan = info aplikasi (dulu tombol i/BATAL). */
+        View callBtn = findViewById(R.id.callButton);
+        callBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 placeCall();
             }
         });
-        /* Hapus: tekan = satu karakter, tahan = kosongkan semua. */
-        View del = findViewById(R.id.btnDel);
-        del.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Editable e = digits.getText();
-                if (e.length() > 0) e.delete(e.length() - 1, e.length());
-            }
-        });
-        del.setOnLongClickListener(new View.OnLongClickListener() {
+        callBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                digits.setText("");
+                new AlertDialog.Builder(DialerActivity.this)
+                        .setTitle("POC DIAL")
+                        .setMessage(R.string.about_text)
+                        .setPositiveButton("OK", null)
+                        .show();
                 return true;
-            }
-        });
-        /* BATAL: kosongkan; kalau sudah kosong, keluar dari aplikasi. */
-        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (digits.getText().length() > 0) {
-                    digits.setText("");
-                } else {
-                    finish();
-                }
             }
         });
 
@@ -201,10 +169,17 @@ public class DialerActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
+            /* DPAD tengah / ENTER sengaja tidak diambil: biarkan tombol yang
+               sedang fokus yang bereaksi (ketik angka, bukan langsung memanggil). */
             case KeyEvent.KEYCODE_CALL:
-            case KeyEvent.KEYCODE_DPAD_CENTER:
-            case KeyEvent.KEYCODE_ENTER:
                 placeCall();
+                return true;
+            case KeyEvent.KEYCODE_DEL:
+                Editable ed = digits.getText();
+                if (ed.length() > 0) ed.delete(ed.length() - 1, ed.length());
+                return true;
+            case KeyEvent.KEYCODE_CLEAR:
+                digits.setText("");
                 return true;
             case KeyEvent.KEYCODE_STAR:
                 digits.append("*");
